@@ -1,17 +1,20 @@
-# primevue-quickstart-vite
+# Para iniciar o frontend para desenvolvimento
 
 
-## Project setup
+## Instale as dependências
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
+## Inicie na porta configurada no arquivo vite.config.js
 ```
 npm run dev
 ```
 
-### Compiles and minifies for production
+# Utilize o .env.example para criar sua variável de ambiente
+
+Esse é o link para a API - Projeto be_backend
+
 ```
-npm run build
+VITE_SERVER_NAME=http://127.0.0.1/api/v1/
 ```
