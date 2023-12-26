@@ -95,6 +95,9 @@ const deletePost = async () => {
 
 const me = async () => {
     const response = await apiClient.get("users/me");
+    if (!response.data.is_admin) {
+        router.push({ name: "post" })
+    }
 }
 
 const logout = async () => {
