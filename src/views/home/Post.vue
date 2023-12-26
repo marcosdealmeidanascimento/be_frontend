@@ -61,9 +61,22 @@ const testToken = async () => {
 
 }
 
+const me = async () => {
+    try {
+        const response = await apiClient.get("users/me");
+
+        if (response.data.is_admin) {
+            router.push({ name: "dashboard" })
+        }
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 onMounted(() => {
     getPost()
     testToken()
+    me()
 })
 
 </script>
