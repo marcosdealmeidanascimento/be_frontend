@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="fadein animation-duration-1000">
     <form @submit.prevent="register" :class="fadeout" id="register">
       <div class="p-4 shadow-2 border-round w-full lg:w-6" id="registerContainer">
         <div class="text-center mb-5">
           <p style="font-weight: 900; font-size: 8rem;">be</p>
-          <div class="text-900 text-3xl font-medium mb-3">Bem-vindo! Crie sua conta</div>
+          <div class="text-900 text-3xl font-medium mb-3">Crie sua conta</div>
           <span class="text-600 font-medium line-height-3">Preencha os campos para prosseguir</span>
         </div>
 
@@ -14,12 +14,10 @@
             :class="[fadeout, invalidEmail]" placeholder="user@example.com" />
 
           <label class="block text-900 font-medium mb-2">Senha</label>
-          <InputText type="password" required class="w-full mb-3" v-model="pw"
-            :class="[invalidPw, fadeout]" />
+          <InputText type="password" required class="w-full mb-3" v-model="pw" :class="[invalidPw, fadeout]" />
 
           <label class="block text-900 font-medium mb-2">Confirme sua senha</label>
-          <InputText type="password" required class="w-full mb-3" v-model="confirm"
-            :class="[invalidPw, fadeout]" />
+          <InputText type="password" required class="w-full mb-3" v-model="confirm" :class="[invalidPw, fadeout]" />
 
           <div class="flex align-items-center justify-content-end mb-6">
             <span class="text-600 font-medium line-height-3">Já possui uma conta?</span>
@@ -31,19 +29,14 @@
         </div>
       </div>
     </form>
-
-    <Toast />
   </div>
 </template>
 <script setup>
 import apiClient from '@/helpers/axios'
 import { ref, onMounted } from "vue";
 import InputText from 'primevue/inputtext';
-import Toast from 'primevue/toast';
-import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router'
 
-const toast = useToast();
 const router = useRouter();
 
 const user = ref("");
@@ -61,7 +54,6 @@ const disabled = ref(false)
 const register = async () => {
   disabled.value = true;
   if (!user.value.includes('.com')) {
-    toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'Email inválido', life: 3000 });
     invalidEmail.value = "p-invalid"
     disabled.value = false;
   } else {
@@ -69,12 +61,10 @@ const register = async () => {
   }
 
   if (pw.value.length < 6 || pw.value.length > 20) {
-    toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'A senha deve ter pelo menos 6 caractéres e no máximo 20!', life: 3000 });
     invalidPw.value = "p-invalid"
     disabled.value = false;
   } else {
     if (pw.value !== confirm.value) {
-      toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'As senhas precisam ser iguais', life: 3000 });
       invalidPw.value = "p-invalid"
       disabled.value = false;
 
@@ -93,12 +83,10 @@ const register = async () => {
           fadeout.value = "hidden";
           fadein.value = "fadeindown animation-duration-300"
         }, 300);
-        toast.add({ severity: 'info', summary: 'Sucesso', detail: 'Conta criado com sucesso', life: 3000 });
         setTimeout(() => {
           router.push("/login");
         }, 3800)
       } else if (response === undefined && invalidPw.value == "" && invalidEmail.value == "") {
-        toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'Email já está em uso', life: 3000 });
         invalidEmail.value = "p-invalid"
         disabled.value = false;
       }

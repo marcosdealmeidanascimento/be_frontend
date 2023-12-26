@@ -14,15 +14,11 @@
     </div>
 </template>
 <script setup>
-import { useAuthStore } from '@/store/auth';
 import { ref, onMounted } from "vue";
-import Toast from 'primevue/toast';
 import apiClient from '@/helpers/axios'
-import { useToast } from 'primevue/usetoast';
 import { useRouter, useRoute } from 'vue-router'
 
 const email = ref("")
-const toast = useToast();
 
 
 const router = useRouter();
@@ -38,12 +34,10 @@ const resend_confirmation = async () => {
     try{
         response.value = await apiClient.post('users/resend-confirmation', {email: email.value})
         if(response.value.status == 200){
-            toast.add({ severity: 'info', summary: 'Email enviado com sucesso', detail: 'Verifique sua caixa de entrada!', life: 3000 });
             setTimeout(() => {
                 router.push("/login")
             }, 3000);
         } else {
-            toast.add({ severity: 'error', summary: 'Erro ao tentar enviar email', detail: 'Tente novamente mais tarde!', life: 3000 });
             setTimeout(() => {
                 router.push("/login")
             }, 3000);

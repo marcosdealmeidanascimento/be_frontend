@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="fadein animation-duration-1000">
         <form @submit.prevent="reset" id="reset">
             <div class="p-4 shadow-2 border-round w-full lg:w-6" id="resetContainer">
                 <div class="text-center mb-5">
@@ -22,7 +22,6 @@
                 </div>
             </div>
         </form>
-        <Toast />
         <section style="height: 100vh; display: flex; align-items: center; justify-content: center;">
             <p :class="fadein" class="text-lg">
                 Seu pedido foi enviado com sucesso! Verifique seu e-mail para continuar.
@@ -34,11 +33,8 @@
 import apiClient from '@/helpers/axios'
 import { ref, onMounted } from "vue";
 import InputText from 'primevue/inputtext';
-import Toast from 'primevue/toast';
-import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router'
 
-const toast = useToast();
 const router = useRouter();
 
 const user = ref("");
@@ -47,9 +43,6 @@ const fadeout = ref("")
 const fadein = ref("")
 const disabled = ref(false)
 
-const show = () => {
-    toast.add({ severity: 'info', summary: 'Um email foi enviado', detail: 'Verifique sua caixa de entrada', life: 3000 });
-};
 
 const reset = async () => {
 
@@ -66,20 +59,14 @@ const reset = async () => {
             fadeout.value = "hidden";
             fadein.value = "fadeindown animation-duration-300"
         }, 200);
-        show()
         setTimeout(() => {
             router.push("/login");
 
         }, 3000)
     } else {
-        toast.add({ severity: 'error', summary: 'Conta não encontrada', detail: "Nenhuma conta foi encontrada com esse email", life: 3000 });
         invalid.value = "p-invalid"
         disabled.value = false;
     }
-
-
-
-
 }
 
 onMounted(() => {

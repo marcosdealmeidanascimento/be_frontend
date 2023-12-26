@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="fadein animation-duration-1000">
         <form @submit.prevent="create" id="post">
             <div class="p-4 shadow-2 border-round w-full lg:w-6" id="postContainer">
                 <div class="text-center mb-5">
@@ -70,8 +70,20 @@ const testToken = async () => {
 
 }
 
+const me = async () => {
+    try {
+        const response = await apiClient.get("users/me");
+        if (response.data.is_admin) {
+            router.push({ name: "dashboard" })
+        }
+    } catch (err) {
+        console.log(err)
+    }
+}
+
 onMounted(() => {
   testToken()
+  me()
 })
 
 </script>
