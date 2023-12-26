@@ -1,6 +1,6 @@
 <template>
-  <div class="fadein animation-duration-1000">
-    <form @submit.prevent="register" :class="fadeout" id="register">
+  <div class="fadein animation-duration-1000" :class="fadeout">
+    <form @submit.prevent="register" id="register">
       <div class="p-4 shadow-2 border-round w-full lg:w-6" id="registerContainer">
         <div class="text-center mb-5">
           <p style="font-weight: 900; font-size: 8rem;">be</p>
@@ -11,13 +11,13 @@
         <div>
           <label class="block text-900 font-medium mb-2">Email</label>
           <InputText :autofocus=true type="email" required class="w-full mb-3" v-model="user"
-            :class="[fadeout, invalidEmail]" placeholder="user@example.com" />
+            :class="[invalidEmail]" placeholder="user@example.com" />
 
           <label class="block text-900 font-medium mb-2">Senha</label>
-          <InputText type="password" required class="w-full mb-3" v-model="pw" :class="[invalidPw, fadeout]" />
+          <InputText type="password" required class="w-full mb-3" v-model="pw" :class="[invalidPw]" />
 
           <label class="block text-900 font-medium mb-2">Confirme sua senha</label>
-          <InputText type="password" required class="w-full mb-3" v-model="confirm" :class="[invalidPw, fadeout]" />
+          <InputText type="password" required class="w-full mb-3" v-model="confirm" :class="[invalidPw]" />
 
           <div class="flex align-items-center justify-content-end mb-6">
             <span class="text-600 font-medium line-height-3">Já possui uma conta?</span>
@@ -30,6 +30,19 @@
       </div>
     </form>
   </div>
+
+  <div style="height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column;" :class="confirmEmail">
+    <p class="text-5xl">
+      Confirme seu email!
+    </p>
+    <p>
+      Enviamos um email para você, confirme-o para continuar.
+    </p>
+    <p class="text-200">
+      Pode fechar essa página.
+    </p>
+  </div>
+
 </template>
 <script setup>
 import apiClient from '@/helpers/axios'
@@ -39,14 +52,15 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter();
 
+const confirmEmail = ref("hidden")
+const fadeout = ref("")
+
 const user = ref("");
 const fullname = ref("");
 const pw = ref("");
 const confirm = ref("");
 const invalidPw = ref("");
 const invalidEmail = ref("");
-const fadeout = ref("")
-const fadein = ref("hidden")
 let response = ref("")
 const disabled = ref(false)
 
@@ -79,13 +93,15 @@ const register = async () => {
       response = await apiClient.post("users/open", data)
 
       if (response !== undefined && invalidPw.value == "" && invalidEmail.value == "") {
+        fadeout.value = "fadeout animation-duration-500"
         setTimeout(() => {
           fadeout.value = "hidden";
-          fadein.value = "fadeindown animation-duration-300"
-        }, 300);
+        }, 500);
+
         setTimeout(() => {
-          router.push("/login");
-        }, 3800)
+          confirmEmail.value = "fadein animation-duration-1000"
+        }, 2000);
+
       } else if (response === undefined && invalidPw.value == "" && invalidEmail.value == "") {
         invalidEmail.value = "p-invalid"
         disabled.value = false;

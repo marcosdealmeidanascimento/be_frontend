@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="fadein animation-duration-1000">
         <div id="post">
             <div class="p-4 shadow-2 border-round w-full lg:w-6" id="postContainer">
                 <div class="text-center mb-5">
@@ -19,6 +19,7 @@ const post = ref(null)
 const content = ref("")
 
 const getPost = async () => {
+    testToken()
     if (!localStorage.getItem("post") || isPostExpired()) {
         try {
             const response = await apiClient.get("post");

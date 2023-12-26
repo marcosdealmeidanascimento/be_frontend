@@ -5,6 +5,7 @@
                 <div class="text-center mb-5">
                     <p style="font-weight: 900; font-size: 8rem;">be</p>
                     <div class="text-900 text-3xl font-medium mb-3">Crie seu post</div>
+                    <p class="text-200">Faça um post a cada 10 (dez) horas</p>
                 </div>
 
                 <div>
@@ -39,34 +40,29 @@ const login = () => {
 
 const create = async () => {
     disabled.value = true
-    if (content.value.length > 24) {
-        try {
-            const response = await apiClient.post("post", {
-                content: content.value
-            });
-            setTimeout(() => {
-                router.push({ name: "post" })
-            }, 2000)
-        } catch (err) {
-            console.log(err)
-        }
-    } else {
+    try {
+        const response = await apiClient.post("post", {
+            content: content.value
+        });
         setTimeout(() => {
             disabled.value = false
-        }, 1500)
+            router.push({ name: "post" })
+        }, 2000)
+    } catch (err) {
+        console.log(err)
     }
 }
 
 const testToken = async () => {
-  try {
-    const response = await apiClient.post("login/test-token");
-    if (response.error) {
-      window.location.assign("/login")
+    try {
+        const response = await apiClient.post("login/test-token");
+        if (response.error) {
+            window.location.assign("/login")
+        }
+    } catch (err) {
+        window.location.assign("/login")
+
     }
-  } catch(err) {
-    window.location.assign("/login")
-    
-  }
 
 }
 
@@ -76,14 +72,18 @@ const me = async () => {
         if (response.data.is_admin) {
             router.push({ name: "dashboard" })
         }
+
+        if (!response.data.can_post) {
+            router.push({ name: "post" })
+        }
     } catch (err) {
         console.log(err)
     }
 }
 
 onMounted(() => {
-  testToken()
-  me()
+    testToken()
+    me()
 })
 
 </script>

@@ -102,6 +102,10 @@ const login = async () => {
 }
 
 onMounted(() => {
+  localStorage.removeItem("token")
+  localStorage.removeItem("post")
+  localStorage.removeItem("postTime")
+  localStorage.removeItem("user")
 })
 
 </script>
