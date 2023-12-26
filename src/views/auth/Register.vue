@@ -63,6 +63,7 @@ const register = async () => {
   if (!user.value.includes('.com')) {
     toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'Email inválido', life: 3000 });
     invalidEmail.value = "p-invalid"
+    disabled.value = false;
   } else {
     invalidEmail.value = ""
   }
@@ -70,10 +71,13 @@ const register = async () => {
   if (pw.value.length < 6 || pw.value.length > 20) {
     toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'A senha deve ter pelo menos 6 caractéres e no máximo 20!', life: 3000 });
     invalidPw.value = "p-invalid"
+    disabled.value = false;
   } else {
     if (pw.value !== confirm.value) {
       toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'As senhas precisam ser iguais', life: 3000 });
       invalidPw.value = "p-invalid"
+      disabled.value = false;
+
     } else {
       invalidPw.value = ""
       const data = {

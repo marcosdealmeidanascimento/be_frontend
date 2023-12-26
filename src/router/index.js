@@ -3,6 +3,22 @@ import BaseLayout from "@/layout/BaseLayout.vue";
 import AuthLayout from "@/layout/AuthLayout.vue";
 const routes = [
   {
+    path: "/admin",
+    component: BaseLayout,
+    redirect: "admin/dashboard",
+    meta: {
+      authRequired: true,
+      hidden: true,
+    },
+    children: [
+      {
+        path: "/admin/dashboard",
+        name: "dashboard",
+        component: () => import("../views/admin/Dashboard.vue"),
+      },
+    ],
+  },
+  {
     path: "/",
     component: BaseLayout,
     redirect: "home",
