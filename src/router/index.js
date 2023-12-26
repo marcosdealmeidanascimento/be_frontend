@@ -33,6 +33,16 @@ const routes = [
         component: () => import("../views/home/Home.vue"),
         meta: { transition: 'slide-right' },
       },
+      {
+        path: "/post",
+        name: "post",
+        component: () => import("../views/home/Post.vue"),
+      },
+      {
+        path: "/createPost",
+        name: "createPost",
+        component: () => import("../views/home/CreatePost.vue"),
+      }
     ],
   },
   {

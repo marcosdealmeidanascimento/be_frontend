@@ -1,0 +1,88 @@
+<template>
+    <div>
+        <form @submit.prevent="create" id="post">
+            <div class="p-4 shadow-2 border-round w-full lg:w-6" id="postContainer">
+                <div class="text-center mb-5">
+                    <p style="font-weight: 900; font-size: 8rem;">be</p>
+                    <div class="text-900 text-3xl font-medium mb-3">Crie seu post</div>
+                </div>
+
+                <div>
+                    <TextArea autoResize required class="w-full mb-3" v-model="content" style="height: 250px;"
+                        placeholder="..." />
+
+                    <Button label="Enviar" :disabled="disabled" class="w-full mt-5" type="submit" />
+                    <p class="text-center text-200">Ou</p>
+                    <a class="flex justify-content-center font-medium no-underline ml-2 text-blue-500  cursor-pointer"
+                        style="color: var(--text-color)"><span @click="login">Volte para o login</span></a>
+                </div>
+            </div>
+        </form>
+    </div>
+</template>
+
+<script setup>
+import apiClient from '@/helpers/axios'
+import TextArea from 'primevue/textarea';
+import { ref, onMounted } from "vue";
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const content = ref("")
+const disabled = ref(false)
+
+const login = () => {
+    localStorage.removeItem("token")
+    router.push({ name: "login" })
+}
+
+const create = async () => {
+    disabled.value = true
+    if (content.value.length > 24) {
+        try {
+            const response = await apiClient.post("post", {
+                content: content.value
+            });
+            setTimeout(() => {
+                router.push({ name: "post" })
+            }, 2000)
+        } catch (err) {
+            console.log(err)
+        }
+    } else {
+        setTimeout(() => {
+            disabled.value = false
+        }, 1500)
+    }
+}
+
+const testToken = async () => {
+  try {
+    const response = await apiClient.post("login/test-token");
+    if (response.error) {
+      window.location.assign("/login")
+    }
+  } catch(err) {
+    window.location.assign("/login")
+    
+  }
+
+}
+
+onMounted(() => {
+  testToken()
+})
+
+</script>
+
+<style scoped>
+#post {
+    display: flex;
+    justify-content: center;
+}
+
+#postContainer {
+    max-width: 800px;
+}
+</style>

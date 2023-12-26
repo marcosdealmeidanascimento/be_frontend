@@ -2,15 +2,15 @@
     <div class="flex flex-column justify-content-between align-items-center p-5">
         <div>
             <h1>Dashboard</h1>
-            <DataTable v-model:selection="selectedPost" selectionMode="single" dataKey="id" :value="posts" @row-click="post"
+            <DataTable stripedRows v-model:selection="selectedPost" selectionMode="single" dataKey="id" :value="posts" @row-click="post"
                 :paginator="true" :rows="10" :rowsPerPageOptions="[10, 20, 30]">
                 <Column field="id" header="ID"></Column>
                 <Column field="title" header="Title"></Column>
                 <Column field="user_id" header="User ID"></Column>
             </DataTable>
-            <Dialog v-model:visible="visible" modal :header="title">
+            <Dialog v-model:visible="visible" modal :header="title" style="min-width: 320px;">
                 <div class="flex flex-column">
-                    <p>{{ content }}</p>
+                    <p class="text-justify">{{ content }}</p>
 
                 </div>
                 <template #footer>

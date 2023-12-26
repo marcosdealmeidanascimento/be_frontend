@@ -9,16 +9,16 @@
         </div>
 
         <div>
-          <label for="email1" class="block text-900 font-medium mb-2">Email</label>
-          <InputText :autofocus=true id="email1" type="email" required class="w-full mb-3" v-model="user"
+          <label class="block text-900 font-medium mb-2">Email</label>
+          <InputText :autofocus=true type="email" required class="w-full mb-3" v-model="user"
             :class="[fadeout, invalidEmail]" placeholder="user@example.com" />
 
-          <label for="password1" class="block text-900 font-medium mb-2">Senha</label>
-          <InputText id="password1" type="password" required class="w-full mb-3" v-model="pw"
+          <label class="block text-900 font-medium mb-2">Senha</label>
+          <InputText type="password" required class="w-full mb-3" v-model="pw"
             :class="[invalidPw, fadeout]" />
 
-          <label for="password1" class="block text-900 font-medium mb-2">Confirme sua senha</label>
-          <InputText id="password1" type="password" required class="w-full mb-3" v-model="confirm"
+          <label class="block text-900 font-medium mb-2">Confirme sua senha</label>
+          <InputText type="password" required class="w-full mb-3" v-model="confirm"
             :class="[invalidPw, fadeout]" />
 
           <div class="flex align-items-center justify-content-end mb-6">
