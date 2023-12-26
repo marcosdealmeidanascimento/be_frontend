@@ -1,29 +1,36 @@
 <template>
-    <p class="text-5xl flex justify-content-center">
-        Reset Your Password
-    </p>
-    <section class="flex justify-content-center">
+    <div>
+        <form @submit.prevent="reset" id="reset">
+            <div class="p-4 shadow-2 border-round w-full lg:w-6" id="resetContainer">
+                <div class="text-center mb-5">
+                    <p style="font-weight: 900; font-size: 8rem;">be</p>
+                    <div class="text-900 text-3xl font-medium mb-3">Encontre sua conta</div>
+                </div>
 
-        <form @submit.prevent="reset" class="flex flex-column w-min">
-            <label for="username" class="col-fixed" :class="fadeout">E-mail</label>
-            <InputText :autofocus="true" :class="[fadeout, invalid]" v-model="user" placeholder="user@example.com" required
-                type="email" />
+                <div>
+                    <label for="email1" class="block text-900 font-medium mb-2">Email</label>
+                    <InputText id="email1" type="email" required class="w-full mb-3" v-model="user"
+                        placeholder="user@example.com" :class="[invalid]" />
 
-            <Button label="Send Request" icon="pi pi-send" type="submit" class="mt-5" :class="fadeout"></Button>
+                    <div class="flex align-items-center justify-content-end mb-6">
+                        <span class="text-600 font-medium line-height-3">Já possui uma conta?</span>
+                        <router-link class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
+                            style="color: var(--text-color)" to="/login">Entre aqui</router-link>
+                    </div>
+
+                    <Button label="Enviar pedido de alteração" :disabled="disabled" icon="pi pi-user" class="w-full" type="submit" />
+                </div>
+            </div>
         </form>
-    </section>
-    <section class="flex flex-column align-items-center">
-        <router-link class="p-primary" :class="fadeout" to="/login">Already have an account? Login here.</router-link>
-    </section>
-    <section class="flex justify-content-center">
-        <p :class="fadein" class="text-lg">
-            Your password reset request was sent to your e-mail
-        </p>
-    </section>
-    <Toast />
+        <Toast />
+        <section style="height: 100vh; display: flex; align-items: center; justify-content: center;">
+            <p :class="fadein" class="text-lg">
+                Seu pedido foi enviado com sucesso! Verifique seu e-mail para continuar.
+            </p>
+        </section>
+    </div>
 </template>
 <script setup>
-import { useAuthStore } from '@/store/auth';
 import apiClient from '@/helpers/axios'
 import { ref, onMounted } from "vue";
 import InputText from 'primevue/inputtext';
@@ -37,11 +44,11 @@ const router = useRouter();
 const user = ref("");
 const invalid = ref("");
 const fadeout = ref("")
-const fadein = ref("hidden")
-const dNone = ref("")
+const fadein = ref("")
+const disabled = ref(false)
 
 const show = () => {
-    toast.add({ severity: 'success', summary: 'A Token was Sent', detail: 'Check your E-mail Champ!', life: 3000 });
+    toast.add({ severity: 'info', summary: 'Um email foi enviado', detail: 'Verifique sua caixa de entrada', life: 3000 });
 };
 
 const reset = async () => {
@@ -49,7 +56,8 @@ const reset = async () => {
     const data = {
         email: user.value
     }
-
+    disabled.value = true;
+    
     const response = await apiClient.post("/password-recovery", data)
     if (response !== undefined) {
         invalid.value = ""
@@ -63,9 +71,10 @@ const reset = async () => {
             router.push("/login");
 
         }, 3000)
-    }else{
-        toast.add({ severity: 'error', summary: 'Account Not Found', detail: "There's no account registered with this email.", life: 3000 });
+    } else {
+        toast.add({ severity: 'error', summary: 'Conta não encontrada', detail: "Nenhuma conta foi encontrada com esse email", life: 3000 });
         invalid.value = "p-invalid"
+        disabled.value = false;
     }
 
 
@@ -80,7 +89,12 @@ onMounted(() => {
 </script>
   
 <style scoped>
-section {
-    margin: 5rem 2.5rem;
+#reset {
+    display: flex;
+    justify-content: center;
+}
+
+#resetContainer {
+    max-width: 800px;
 }
 </style>

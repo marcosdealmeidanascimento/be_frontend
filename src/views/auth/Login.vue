@@ -1,32 +1,33 @@
 <template>
-  <main :class="fadeout">
-
-    <p class="text-5xl flex justify-content-center">
-      Login
-    </p>
-    <section class="flex justify-content-center">
-      <form @submit.prevent="login" class="flex flex-column w-min">
-
-        <label for="username" class="col-fixed">E-mail</label>
-        <InputText :autofocus="true" :class="invalid" v-model="user" placeholder="user@example.com" required
-          type="email" />
-
-        <label for="password" class="col-fixed mt-5">Password</label>
-        <Password v-model="pw" :class="invalid" :feedback="false" toggleMask required />
-
-        <Button icon="pi pi-send" label="Log In" type="submit" class="mt-5" />
-      </form>
-    </section>
-    <section class="flex flex-column align-items-center">
-      <router-link class="my-2" style="color: var(--text-color)" to="/register">Don't have an account? Register
-        here</router-link>
-      <router-link style="color: var(--text-color)" to="/password-recovery">Forgot your
-        password?</router-link>
-    </section>
-  </main>
-  <Toast />
-  <div :class="fadein">
-    <Resend :email="user" v-if="resend" />
+  <div>
+    <form @submit.prevent="login" :class="fadeout" id="login">
+      <div class="p-4 shadow-2 border-round w-full lg:w-6" id="loginContainer">
+        <div class="text-center mb-5">
+          <p style="font-weight: 900; font-size: 8rem;">be</p>
+          <div class="text-900 text-3xl font-medium mb-3">Bem-vindo! Entre na sua conta</div>
+          <span class="text-600 font-medium line-height-3">Não tem uma conta?</span>
+          <router-link class="font-medium no-underline ml-2 text-blue-500 cursor-pointer" style="color: var(--text-color)"
+            to="/register">Crie uma agora!</router-link>
+        </div>
+  
+        <div>
+          <label for="email1" class="block text-900 font-medium mb-2">Email</label>
+          <InputText id="email1" type="email" required class="w-full mb-3" v-model="user" placeholder="user@example.com"/>
+  
+          <label for="password1" class="block text-900 font-medium mb-2">Senha</label>
+          <InputText id="password1" type="password" required class="w-full mb-3" v-model="pw" />
+  
+          <div class="flex align-items-center justify-content-end mb-6">
+            <router-link class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
+              style="color: var(--text-color)" to="/password-recovery">Esqueceu a senha?</router-link>
+          </div>
+  
+          <Button label="Entrar" icon="pi pi-user" class="w-full" type="submit" />
+        </div>
+      </div>
+    </form>
+    
+    <Toast />
   </div>
 </template>
 <script setup>
@@ -37,7 +38,6 @@ import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import Resend from './Resend.vue';
 
 const toast = useToast();
 const router = useRouter();
@@ -51,14 +51,16 @@ const resend = ref(false)
 const loginComponent = ref(true)
 const fadeout = ref("")
 const fadein = ref("hidden")
+const disabled = ref(false)
 
 
 
 const show = () => {
-  toast.add({ severity: 'error', summary: 'Failed to Log In', detail: 'Incorrect Email or Password', life: 3000 });
+  toast.add({ severity: 'error', summary: 'Erro ao tentar entrar', detail: 'Email ou senha incorreto!', life: 3000 });
 };
 
 const login = async () => {
+  disabled.value = true
   if (user.value !== "" && pw.value !== "") {
 
     var data = {
@@ -83,11 +85,13 @@ const login = async () => {
     try {
       const userData = await axios(config);
       response.value = await configure.login(user.value, pw.value);
-      toast.add({ severity: 'success', summary: 'Logged In', detail: 'Welcome!', life: 3000 });
+      toast.add({ severity: 'info', summary: 'Acesso garantido', detail: 'Bem-vindo!', life: 3000 });
+  
       setTimeout(() => {
         router.push("/");
       }, 3000);
     } catch (err) {
+      disabled.value = false
       invalid.value = "p-invalid";
       show();
       setTimeout(() => {
@@ -96,6 +100,7 @@ const login = async () => {
           fadeout.value = "hidden"
           resend.value = true
           loginComponent.value = false
+          router.push("/resend?email=" + user.value);
         }
       }, 1000);
     }
@@ -109,4 +114,14 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+#login {
+  display: flex;
+  justify-content: center;
+}
+
+#loginContainer {
+  max-width: 800px;
+}
+
 </style>

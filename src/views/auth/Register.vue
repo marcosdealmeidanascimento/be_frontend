@@ -1,35 +1,39 @@
 <template>
-  <p class="text-5xl flex justify-content-center">
-    Register
-  </p>
-  <section class="flex justify-content-center">
+  <div>
+    <form @submit.prevent="register" :class="fadeout" id="register">
+      <div class="p-4 shadow-2 border-round w-full lg:w-6" id="registerContainer">
+        <div class="text-center mb-5">
+          <p style="font-weight: 900; font-size: 8rem;">be</p>
+          <div class="text-900 text-3xl font-medium mb-3">Bem-vindo! Crie sua conta</div>
+          <span class="text-600 font-medium line-height-3">Preencha os campos para prosseguir</span>
+        </div>
 
-    <form @submit.prevent="register" class="flex flex-column w-min" :class="fadeout">
+        <div>
+          <label for="email1" class="block text-900 font-medium mb-2">Email</label>
+          <InputText :autofocus=true id="email1" type="email" required class="w-full mb-3" v-model="user"
+            :class="[fadeout, invalidEmail]" placeholder="user@example.com" />
 
-      <label for="fullname" :class="fadeout" class="col-fixed mt-5">Full Name</label>
-      <InputText :autofocus=true :class="fadeout" v-model="fullname" placeholder="Full Name" required />
+          <label for="password1" class="block text-900 font-medium mb-2">Senha</label>
+          <InputText id="password1" type="password" required class="w-full mb-3" v-model="pw"
+            :class="[invalidPw, fadeout]" />
 
-      <label for="username" :class="fadeout" class="col-fixed mt-2">E-mail</label>
-      <InputText v-model="user" :class="[fadeout, invalidEmail]" placeholder="user@example.com" required type="email" />
+          <label for="password1" class="block text-900 font-medium mb-2">Confirme sua senha</label>
+          <InputText id="password1" type="password" required class="w-full mb-3" v-model="confirm"
+            :class="[invalidPw, fadeout]" />
 
-      <label for="password" :class="fadeout" class="col-fixed mt-5">Password</label>
-      <Password v-model="pw" toggleMask required :class="[invalidPw, fadeout]" />
+          <div class="flex align-items-center justify-content-end mb-6">
+            <span class="text-600 font-medium line-height-3">Já possui uma conta?</span>
+            <router-link class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
+              style="color: var(--text-color)" to="/login">Entre aqui</router-link>
+          </div>
 
-      <label for="password" :class="fadeout" class="col-fixed mt-2">Confirm Password</label>
-      <Password v-model="confpw" :feedback="false" toggleMask required :class="[invalidPw, fadeout]" />
-
-      <Button :class="fadeout" label="Register" type="submit" class="mt-3" />
+          <Button label="Registrar-se" :disabled="disabled" icon="pi pi-user" class="w-full" type="submit" />
+        </div>
+      </div>
     </form>
-  </section>
-  <section class="flex justify-content-center mt-3">
-    <router-link :class="fadeout" class="p-primary" to="/login">Already have an account? Login here.</router-link>
-  </section>
-  <section class="flex justify-content-center">
-    <p :class="fadein" class="text-lg">
-      Account created with success!
-    </p>
-  </section>
-  <Toast />
+
+    <Toast />
+  </div>
 </template>
 <script setup>
 import apiClient from '@/helpers/axios'
@@ -45,33 +49,36 @@ const router = useRouter();
 const user = ref("");
 const fullname = ref("");
 const pw = ref("");
-const confpw = ref("");
+const confirm = ref("");
 const invalidPw = ref("");
 const invalidEmail = ref("");
 const fadeout = ref("")
 const fadein = ref("hidden")
 let response = ref("")
+const disabled = ref(false)
+
 
 const register = async () => {
+  disabled.value = true;
   if (!user.value.includes('.com')) {
-    toast.add({ severity: 'error', summary: 'Failed to Register', detail: 'Not a valid E-mail', life: 3000 });
+    toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'Email inválido', life: 3000 });
     invalidEmail.value = "p-invalid"
   } else {
     invalidEmail.value = ""
   }
 
   if (pw.value.length < 6 || pw.value.length > 20) {
-    toast.add({ severity: 'error', summary: 'Failed to Register', detail: 'Password length must be greater than 6 and less than 20', life: 3000 });
+    toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'A senha deve ter pelo menos 6 caractéres e no máximo 20!', life: 3000 });
     invalidPw.value = "p-invalid"
   } else {
-    if (pw.value !== confpw.value) {
-      toast.add({ severity: 'error', summary: 'Failed to Register', detail: 'Passwords must be equal', life: 3000 });
+    if (pw.value !== confirm.value) {
+      toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'As senhas precisam ser iguais', life: 3000 });
       invalidPw.value = "p-invalid"
     } else {
       invalidPw.value = ""
       const data = {
         full_name: fullname.value,
-        password: confpw.value,
+        password: confirm.value,
         email: user.value,
       }
 
@@ -82,13 +89,14 @@ const register = async () => {
           fadeout.value = "hidden";
           fadein.value = "fadeindown animation-duration-300"
         }, 300);
-        toast.add({ severity: 'success', summary: 'Success', detail: 'Account created with success!', life: 3000 });
+        toast.add({ severity: 'info', summary: 'Sucesso', detail: 'Conta criado com sucesso', life: 3000 });
         setTimeout(() => {
           router.push("/login");
         }, 3800)
       } else if (response === undefined && invalidPw.value == "" && invalidEmail.value == "") {
-        toast.add({ severity: 'error', summary: 'Failed to Register', detail: 'E-mail already in use', life: 3000 });
+        toast.add({ severity: 'error', summary: 'Falha ao criar a conta', detail: 'Email já está em uso', life: 3000 });
         invalidEmail.value = "p-invalid"
+        disabled.value = false;
       }
     }
 
@@ -105,4 +113,12 @@ onMounted(() => {
 
 
 <style scoped>
+#register {
+  display: flex;
+  justify-content: center;
+}
+
+#registerContainer {
+  max-width: 800px;
+}
 </style>

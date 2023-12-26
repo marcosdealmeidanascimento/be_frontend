@@ -28,32 +28,32 @@ const routes = [
         path: "/login",
         name: "login",
         component: () => import("../views/auth/Login.vue"),
-        meta: { transition: "slide-right" },
       },
       {
         path: "/register",
         name: "register",
         component: () => import("../views/auth/Register.vue"),
-        meta: { transition: "slide-right" },
       },
       {
         path: "/confirm",
         name: "confirm",
         component: () => import("../views/auth/Confirm.vue"),
-        meta: { transition: "slide-right" },
       },
       {
         path: "/reset-password",
         name: "reset",
         component: () => import("../views/auth/ResetPassword.vue"),
-        meta: { transition: "slide-right" },
       },
       {
         path: "/password-recovery",
         name: "forgot",
         component: () => import("../views/auth/Forgot.vue"),
-        meta: { transition: "slide-right" },
       },
+      {
+        path: "/resend",
+        name: "resend",
+        component: () => import("../views/auth/Resend.vue"),
+      }
     ]
   }
 ];

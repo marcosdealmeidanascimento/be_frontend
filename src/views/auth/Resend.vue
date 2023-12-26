@@ -1,44 +1,61 @@
 <template>
-    <p class="text-5xl flex justify-content-center">
-        Resend E-mail Confirmation
-    </p>
-    <section class="flex justify-content-center">
-        <form @submit.prevent="resend_confirmation" class="flex flex-column w-min">
-            <Button icon="pi pi-send" label="Resend Confirmation" type="submit" class="mt-5" />
-        </form>
-    </section>
-    <section class="flex flex-column align-items-center -my-6">
-        <router-link class="mb-2" style="color: var(--text-color)" to="/register">Don't have an account? Register
-            here</router-link>
-    </section>
-    <Toast />
+    <div style="height: 100vh; display: flex; align-items: center; justify-content: center;">
+        <section>
+            <p class="text-5xl flex justify-content-center">
+                Reenviar confirmação de email
+            </p>
+            <div class="flex justify-content-center">
+                <form @submit.prevent="resend_confirmation">
+                    <Button icon="pi pi-send" :disabled="disabled" label="Reenviar Confirmação" type="submit" />
+                </form>
+            </div>
+            <Toast />
+        </section>
+    </div>
 </template>
 <script setup>
 import { useAuthStore } from '@/store/auth';
 import { ref, onMounted } from "vue";
-import InputText from 'primevue/inputtext';
 import Toast from 'primevue/toast';
 import apiClient from '@/helpers/axios'
 import { useToast } from 'primevue/usetoast';
-import { useRouter } from 'vue-router'
-const email = defineProps(['email'])
+import { useRouter, useRoute } from 'vue-router'
 
+const email = ref("")
 const toast = useToast();
-const router = useRouter();
-const configure = useAuthStore();
 
-const user = ref("");
-const invalid = ref("");
+
+const router = useRouter();
+const route = useRoute();
+
+const disabled = ref(false)
+
 const response = ref();
 
 
 const resend_confirmation = async () => {
-    response.value = await apiClient.post('users/resend-confirmation', {email: email.email})
+    disabled.value = true
+    try{
+        response.value = await apiClient.post('users/resend-confirmation', {email: email.value})
+        if(response.value.status == 200){
+            toast.add({ severity: 'info', summary: 'Email enviado com sucesso', detail: 'Verifique sua caixa de entrada!', life: 3000 });
+            setTimeout(() => {
+                router.push("/login")
+            }, 3000);
+        } else {
+            toast.add({ severity: 'error', summary: 'Erro ao tentar enviar email', detail: 'Tente novamente mais tarde!', life: 3000 });
+            setTimeout(() => {
+                router.push("/login")
+            }, 3000);
+        }
 
+    } catch (error) {
+        console.log(error)
+    }
 }
 
-
 onMounted(() => {
+    email.value = route.query.email
 })
 
 </script>
