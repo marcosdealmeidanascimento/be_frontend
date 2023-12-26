@@ -9,29 +9,36 @@
           <router-link class="font-medium no-underline ml-2 text-blue-500 cursor-pointer" style="color: var(--text-color)"
             to="/register">Crie uma agora!</router-link>
         </div>
-  
+
         <div>
           <label class="block text-900 font-medium mb-2">Email</label>
-          <InputText :autofocus="true" type="email" required class="w-full mb-3" v-model="user" placeholder="user@example.com"/>
-  
+          <InputText :autofocus="true" type="email" required class="w-full mb-3" v-model="user"
+            placeholder="user@example.com" :class="invalid" />
+
           <label class="block text-900 font-medium mb-2">Senha</label>
-          <InputText type="password" required class="w-full mb-3" v-model="pw" />
-  
+          <InputText type="password" required class="w-full mb-3" :class="invalid" v-model="pw" />
+
           <div class="flex align-items-center justify-content-end mb-6">
             <router-link class="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer"
               style="color: var(--text-color)" to="/password-recovery">Esqueceu a senha?</router-link>
           </div>
-  
+
           <Button label="Entrar" icon="pi pi-user" class="w-full" type="submit" />
         </div>
       </div>
     </form>
   </div>
+  <Dialog v-model:visible="visible" modal>
+    <template #header>
+      <p class="text-800 text-3xl text-red-200">Email ou senha inválidos</p>
+    </template>
+  </Dialog>
 </template>
 <script setup>
 import { useAuthStore } from '@/store/auth';
 import { ref, onMounted } from "vue";
 import InputText from 'primevue/inputtext';
+import Dialog from 'primevue/dialog';
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
@@ -46,6 +53,8 @@ const resend = ref(false)
 const loginComponent = ref(true)
 const fadeout = ref("")
 const disabled = ref(false)
+
+const visible = ref(false)
 
 
 
@@ -76,7 +85,7 @@ const login = async () => {
       const userData = await axios(config);
       response.value = await configure.login(user.value, pw.value);
       fadeout.value = "fadeout animation-duration-500"
-      
+
       setInterval(() => {
         fadeout.value = "hidden"
       }, 400);
@@ -87,9 +96,9 @@ const login = async () => {
     } catch (err) {
       disabled.value = false
       invalid.value = "p-invalid";
+      visible.value = true
       setTimeout(() => {
         if (err.response.status == 401) {
-          fadein.value = "fadeindown animation-duration-300"
           fadeout.value = "hidden"
           resend.value = true
           loginComponent.value = false
@@ -111,7 +120,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 #login {
   display: flex;
   justify-content: center;
@@ -120,5 +128,4 @@ onMounted(() => {
 #loginContainer {
   max-width: 800px;
 }
-
 </style>

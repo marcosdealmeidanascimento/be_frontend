@@ -9,7 +9,6 @@
                     <Button icon="pi pi-send" :disabled="disabled" label="Reenviar Confirmação" type="submit" />
                 </form>
             </div>
-            <Toast />
         </section>
     </div>
 </template>
