@@ -64,7 +64,7 @@ const testToken = async () => {
 const me = async () => {
     try {
         const response = await apiClient.get("users/me");
-
+        console.log(response.data)
         if (response.data.is_admin) {
             router.push({ name: "dashboard" })
         }
